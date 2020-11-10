@@ -8,7 +8,7 @@ import SearchResults from '../SearchResults/SearchResults';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { searchResults: [], playlistName: '', playlistTracks: [] };
+    this.state = { searchResults: [], playlistName: 'New Playlist', playlistTracks: [] };
 
     this.addTrack = this.addTrack.bind(this);
     this.removeTrack = this.removeTrack.bind(this);
