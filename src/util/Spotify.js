@@ -6,7 +6,7 @@ let expiresIn;
 export const Spotify = {
   getAccessToken: () => {
     if (accessToken) {
-      return accessToken
+      return;
     } else if (window.location.href.match(/access_token=([^&]*)/)) {
       accessToken = window.location.href.match(/access_token=([^&]*)/)[1];
       expiresIn = window.location.href.match(/expires_in=([^&]*)/)[1];
@@ -17,16 +17,26 @@ export const Spotify = {
     }
   },
   search: (term) => {
-    if (accessToken) {
-      return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, { headers: { Authorization: `Bearer ${accessToken}` } })
-        .then((response) => {
-          return response.json()
-        })
-        .then((jsonResponse) => {
-          return jsonResponse
-        })
-    } else {
+    if (!accessToken) {
       Spotify.getAccessToken();
     }
+    return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, { headers: { Authorization: `Bearer ${accessToken}` } })
+      .then((response) => {
+        return response.json()
+      })
+      .then((jsonResponse) => {
+        if (jsonResponse.tracks) {
+          return jsonResponse.tracks.items.map((track) => {
+            return {
+              id: track.id,
+              name: track.name,
+              artist: track.artists[0].name,
+              album: track.album.name,
+              uri: track.uri
+            }
+          })
+        }
+        return []
+      })
   }
 }

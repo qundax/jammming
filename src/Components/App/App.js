@@ -39,8 +39,9 @@ export default class App extends React.Component {
     })
   }
 
-  search(term) {
-    Spotify.search(term);
+  async search(term) {
+    const tracks = await Spotify.search(term);
+    this.setState({ searchResults: tracks });
   }
   
   render() {
