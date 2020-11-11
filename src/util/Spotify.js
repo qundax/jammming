@@ -2,6 +2,7 @@ const clientId = '666e7640c2994bf0903c1bf5a67693e8';
 const redirectURI = 'http://localhost:3000/';
 let accessToken;
 let expiresIn;
+let userId;
 
 export const Spotify = {
   getAccessToken: () => {
@@ -15,6 +16,18 @@ export const Spotify = {
     } else {
       window.location = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
     }
+  },
+  getUserId: () => {
+    if (!accessToken) {
+      Spotify.getAccessToken();
+    }
+    return fetch('https://api.spotify.com/v1/me', { headers: { Authorization: `Bearer ${accessToken}` } })
+      .then((response) => {
+        return response.json()
+      })
+      .then((jsonResponse) => {
+        userId = jsonResponse.id;
+      })
   },
   search: (term) => {
     if (!accessToken) {
@@ -38,5 +51,32 @@ export const Spotify = {
         }
         return []
       })
+  },
+  savePlaylist: async (name, tracks) => {
+    if (!accessToken) {
+      Spotify.getAccessToken();
+    }
+    if (name && tracks) {
+      await Spotify.getUserId();
+      const response = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ name })
+      });
+      const playlist = await response.json();
+      fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ uris: tracks })
+      })
+    } else {
+      return;
+    }
   }
 }

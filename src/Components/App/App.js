@@ -26,7 +26,7 @@ export default class App extends React.Component {
   }
 
   removeTrack(track) {
-    this.setState({ playlistTracks: this.state.playlistTracks.filter((savedTrack) => savedTrack.id === track.id) });
+    this.setState({ playlistTracks: this.state.playlistTracks.filter((savedTrack) => savedTrack.id !== track.id) });
   }
 
   updatePlaylistName(name) {
@@ -34,9 +34,11 @@ export default class App extends React.Component {
   }
 
   savePlaylist() {
-    const trackURIs = this.playlistTracks.map((track) => {
+    const trackURIs = this.state.playlistTracks.map((track) => {
       return `spotify:track:${track.id}`
     })
+    Spotify.savePlaylist(this.state.playlistName, trackURIs);
+    this.setState({ playlistName: 'New Playlist', playlistTracks: [] })
   }
 
   async search(term) {
