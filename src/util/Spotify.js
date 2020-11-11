@@ -1,5 +1,5 @@
 const clientId = '666e7640c2994bf0903c1bf5a67693e8';
-const redirectURI = 'http://localhost:3000/';
+const redirectUri = 'http://jammming-with-qd.surge.sh/';
 let accessToken;
 let expiresIn;
 let userId;
@@ -14,7 +14,7 @@ export const Spotify = {
       window.setTimeout(() => accessToken = '', expiresIn * 1000);
       window.history.pushState('Access Token', null, '/');
     } else {
-      window.location = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
+      window.location = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectUri}`;
     }
   },
   getUserId: () => {
